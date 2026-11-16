@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "sourceRepository": "https://github.com/microsoft/amplifier-unified",
+  "sourceRevision": "559d388ae4cefbedc048b8af54c72b94216b4e18",
+  "sourceSubdirectory": "components/scheduling",
+  "importHead": "99659f4c12f0d54b56be0bc676362d5551dc6161",
+  "importTree": "265650fcb31b9f465b6b79631f8244d7d3ef5cbf",
+  "commitMap": [
+    {
+      "original": "c4a9aacb16659c5f8332933c7b0a45d416a38528",
+      "imported": "996587170cc589eb4d26d63901e1d5f8aa2ae182"
+    },
+    {
+      "original": "c3eb9279b0c7e0c7c032ecbe3626bebffc111f23",
+      "imported": "0dfb1d3d2a345115b1ebde08585adc3cb3ff8d78"
+    },
+    {
+      "original": "ce6a03b663bcc24971d1413dfa4eb370ae7c9b5f",
+      "imported": "ebdb748c158a3a094c35c968c6a0129be1d14205"
+    },
+    {
+      "original": "a6b91346f4e7314959aacc0004495a3022f6aaa8",
+      "imported": "63d41e7bd7632a4e15b7dd276613ce271733e7b0"
+    },
+    {
+      "original": "52ba095ff8d899782da3d0aa3b914d84c54c22c6",
+      "imported": "3cfc6c52361f73b2f72a2593a5a197a3d8e67366"
+    },
+    {
+      "original": "361fa351bfe8c7707d5c4184741288fb84f5f19b",
+      "imported": "1ce344bf42eae8e6ea519dc522a43b2d89a78afa"
+    },
+    {
+      "original": "94dc229f28e1c6dd8194782b35f7cb367fda7870",
+      "imported": "43719e072931777431f8cec0722bdb65385595a5"
+    },
+    {
+      "original": "654a7225cabae2f931bc411ab5b14c6d92c7d83f",
+      "imported": "99659f4c12f0d54b56be0bc676362d5551dc6161"
+    }
+  ],
+  "files": {
+    ".gitignore": "91ff24eaa65a89ef74d692e164233422924a556a07666dd471ceefc6a31f331f",
+    "LICENSE": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+    "MANIFEST.in": "ca4d086a2960c7e0254208f08bf99f5db67adb33599085574b1155e859c7fb0a",
+    "README.md": "19f8da00ac7f6d44a34e2f86f2b4060ab4f651a1f7b1fdd79ce7f04cf40b36d6",
+    "amplifier_scheduling/__init__.py": "e6bb4a63a91e41ca20f3cff862a95d53eac72210f9f0b4ec9e36338517d2adeb",
+    "amplifier_scheduling/policy.py": "42ff0fc1a90eed3bdc1c24faa10700b8b933ea99b5f011bb04a83176b7aaa0ff",
+    "amplifier_scheduling/store.py": "d99bc8e2ee33894a28df594484985c0b72fd726008a57844c58eaa4e405a176f",
+    "pyproject.toml": "6559ec7e7275b722037cf9001611f4fbdbf71978e8704e1d161a6220ec9f0c8d",
+    "tests/test_policy_store.py": "f46fe1a554e3f6009c7807bc503dd83f2eec2bf2723f015cd992c206a867ebe0"
+  },
+  "history": "Original author, committer, timestamps and message bytes preserved; path-filtered trees and parent identities produce new commit hashes. Original signed commits remain authoritative at the source repository.",
+  "delivery": "Local import preparation only. No repository handoff, package publication or Unified selection change. Original scheduling-v0.1.0 artifacts and source receipt remain unchanged in amplifier-unified."
+}
