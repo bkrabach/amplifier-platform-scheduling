@@ -134,3 +134,40 @@ trademarks or logos is subject to and must follow
 [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/legal/intellectualproperty/trademarks/usage/general).
 Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
 Any use of third-party trademarks or logos are subject to those third-party's policies.
+
+## Immutable release artifacts
+
+The repository-root producer is `scripts/release.py`. Ordinary pushes and pull
+requests check publication safety, build the package, and run its installed tests
+on Linux and Windows. Publication is a separate manual **Scheduling package**
+workflow run on `main`: supply a full merged commit SHA and explicitly enable
+`publish`. The workflow publishes only the original artifacts that passed those
+checks; it does not choose or increment a version. Review the project version
+before requesting a release. This change does not publish a release itself.
+
+Each release has four assets: `amplifier_scheduling-V-py3-none-any.whl`,
+`amplifier_scheduling-V.tar.gz`, `scheduling-source.json`, and `SHA256SUMS`.
+The schema-1 receipt explicitly identifies `component: scheduling`, this
+repository, `subdirectory: .`, and the exact commit/root tree. Its `sourceFiles`
+map covers the package metadata, README, license, manifest, provenance and
+conduct/security/support files, every `amplifier_scheduling/` file, and the
+standalone `tests/`. Each input is verified in the sdist, and runtime files are
+verified in the wheel. Repository workflows, `scripts/`, and `tests_release/`
+are bound by the full Git tree rather than shipped as package inputs.
+
+The producer refuses conflicting tags or asset bytes and never overwrites them.
+It reads an existing draft by its exact ID, including drafts hidden from the tag
+endpoint, and uploads only missing assets. A failed or cancelled request can have
+completed remotely: inspect its saved state and retain the original four assets.
+An explicit rerun with those same assets reconciles that state; the producer does
+not automatically retry an uncertain mutation or rebuild missing published bytes.
+Completed releases are verified without mutation. Releases are not promoted through
+GitHub's `latest` channel; consumers select an explicit tag and receipt.
+
+The reconciliation controls originate from Unified's reviewed component producer
+at `792fa1c550101eb00958a05dadfc51017e86f7ff`. Scheduling's future producer is owned
+here. Existing Unified-produced releases and their source paths remain immutable.
+Unified's consumer cutover and retirement of its editable Scheduling author copy
+are separate reviewed work; this workflow does not change its selected artifact.
+Until that cutover, do not independently release competing Scheduling changes from
+both repositories. Other Unified component producers remain with their own owners.
