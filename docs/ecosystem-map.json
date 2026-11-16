@@ -1,0 +1,81 @@
+{
+  "audience": "Developers embedding the documented Python library",
+  "citations": [
+    {
+      "path": "README.md",
+      "ref": "89912d4eb431d0e5abdc5826854f9a9c4abfa8bb",
+      "sha256": "f4798e1041470da4902ac6b0d7d55d39506310d398a12c50b82e0305a1fb3b26",
+      "url": "https://github.com/bkrabach/amplifier-platform-scheduling/blob/89912d4eb431d0e5abdc5826854f9a9c4abfa8bb/README.md"
+    },
+    {
+      "path": "PROVENANCE.json",
+      "ref": "89912d4eb431d0e5abdc5826854f9a9c4abfa8bb",
+      "sha256": "19fe699f2902f7cfde546a413fa2c4624d29b3c9657036a15a9ebe1bb98411ea",
+      "url": "https://github.com/bkrabach/amplifier-platform-scheduling/blob/89912d4eb431d0e5abdc5826854f9a9c4abfa8bb/PROVENANCE.json"
+    },
+    {
+      "path": "pyproject.toml",
+      "ref": "89912d4eb431d0e5abdc5826854f9a9c4abfa8bb",
+      "sha256": "6559ec7e7275b722037cf9001611f4fbdbf71978e8704e1d161a6220ec9f0c8d",
+      "url": "https://github.com/bkrabach/amplifier-platform-scheduling/blob/89912d4eb431d0e5abdc5826854f9a9c4abfa8bb/pyproject.toml"
+    }
+  ],
+  "display_name": "Amplifier Platform Scheduling",
+  "edges": [
+    {
+      "from": "caller",
+      "relation": "uses",
+      "to": "self"
+    },
+    {
+      "from": "self",
+      "relation": "contains",
+      "to": "part-0"
+    },
+    {
+      "from": "self",
+      "relation": "contains",
+      "to": "part-1"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "self",
+      "kind": "self",
+      "label": "Amplifier Platform Scheduling",
+      "repository": "bkrabach/amplifier-platform-scheduling"
+    },
+    {
+      "id": "caller",
+      "kind": "external",
+      "label": "Calling application (Python API)"
+    },
+    {
+      "id": "part-0",
+      "kind": "internal",
+      "label": "Recurrence policy"
+    },
+    {
+      "id": "part-1",
+      "kind": "internal",
+      "label": "Durable run admission store"
+    }
+  ],
+  "notes": [
+    "This is an independent open-source package hosted by bkrabach, not a Microsoft component in the Constellation family index.",
+    "The public source import preserves its Unified provenance. Source ownership, publication and consumer artifact selection are separate reviewed steps; this listing does not change an existing selection.",
+    "The store does not run model work. Ambiguous handoff remains unknown and requires deliberate reconciliation; importing this source does not replace Foundation scheduling APIs."
+  ],
+  "page_kind": "supporting library",
+  "purpose": "Calculate recurring times and retain durable run-admission receipts. An independent Python library.",
+  "ref": "89912d4eb431d0e5abdc5826854f9a9c4abfa8bb",
+  "repository": "bkrabach/amplifier-platform-scheduling",
+  "roles": [],
+  "start_cta": {
+    "label": "Read the library guide",
+    "url": "https://github.com/bkrabach/amplifier-platform-scheduling/blob/89912d4eb431d0e5abdc5826854f9a9c4abfa8bb/README.md#build-and-test-independently"
+  },
+  "summary": "Recurrence rules and a SQLite admission store for a calling application. The caller supplies authorization, input submission, Stop and observed outcomes.",
+  "supports_roles": [],
+  "visibility": "public"
+}
