@@ -51,5 +51,5 @@
     "tests/test_policy_store.py": "f46fe1a554e3f6009c7807bc503dd83f2eec2bf2723f015cd992c206a867ebe0"
   },
   "history": "Original author, committer, timestamps and message bytes preserved; path-filtered trees and parent identities produce new commit hashes. Original signed commits remain authoritative at the source repository.",
-  "delivery": "Local import preparation only. No repository handoff, package publication or Unified selection change. Original scheduling-v0.1.0 artifacts and source receipt remain unchanged in amplifier-unified."
+  "delivery": "Prepared public author home bkrabach/amplifier-platform-scheduling with later transfer planned. No new package publication or Unified selection change. Original scheduling-v0.1.0 artifacts and source receipt remain unchanged in amplifier-unified."
 }

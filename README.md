@@ -57,93 +57,58 @@ do not add a source checkout to `PYTHONPATH`.
 
 ## Ownership and delivery
 
-This directory is temporarily authored in Amplifier Unified while the planned
-`amplifier-platform-scheduling` repository is unavailable. It is not a generated
-copy. The Python files in `amplifier_scheduling/` are the sole authored implementation
-and `tests/` is the sole policy/store test suite. The Scheduling package workflow
-tests those files through their own installed wheel on Linux and Windows.
-Unified selects a published artifact separately, as described below. Its scheduler,
-authorization, Stop handling, execution admission and browser integration tests
-remain with Unified. There is no new scheduler process or database migration.
+This history-preserving project is prepared as the public standalone author home
+at `bkrabach/amplifier-platform-scheduling`, with a later transfer to Microsoft
+planned. [PROVENANCE.json](PROVENANCE.json) maps the original Unified commits,
+including the runtime and tests before their move into `components/scheduling`.
+The MIT license and original attribution remain intact. Repository hosting does
+not rename the `amplifier-scheduling` distribution or `amplifier_scheduling` import.
 
-Use a separate environment for the standalone distribution for now. Do not
-install it alongside `amplifier-unified`: Unified owns the selected installed
-package files. Scheduling is not independently replaceable with pip in that prefix.
+The host still owns authorization, Stop handling, task and execution admission,
+and browser integration. The library adds no scheduler process or migration.
+Its runtime and five tests are unchanged by this import. Authoring handoff and
+Unified's artifact selection are separately reviewed changes; do not maintain
+competing authored copies after the handoff.
 
-A later history-preserving repository import can use this project directly.
-Keep changes here until that import and an explicit authoring handoff are complete;
-do not maintain a second implementation at the old repository-root path.
-Independent publication and Unified's dependency selection are separate delivery
-steps. Existing schedule databases, run identities and uncertain outcomes retain
-their current authority throughout that transition.
+Use a separate environment for this distribution. Do not install it alongside
+`amplifier-unified`: Unified currently owns its selected installed package files.
+Scheduling is not independently replaceable with pip in that prefix.
 
-## Unified artifact selection
+## Unified's current artifact selection
 
-Unified consumes scheduling 0.1.0 from the public `scheduling-v0.1.0` release.
-`../scheduling-delivery/` is a generated snapshot of its wheel runtime and license;
-`../scheduling.source.json` records the exact artifact, producer source, file hashes
-and runtime requirements. Never edit this copy by hand. Component development and
-publication continue here independently while Unified's selected version stays fixed.
+Unified currently selects the original scheduling 0.1.0 wheel from
+[its immutable scheduling-v0.1.0 release](https://github.com/microsoft/amplifier-unified/releases/tag/scheduling-v0.1.0).
+That release and its source receipt continue to identify their original Unified
+producer; this repository does not replace or republish those bytes.
 
-To select a release, download its four published assets into a private directory,
-verify the source-receipt SHA256 against the reviewed publication, and run from
-the Unified checkout:
+Unified's `components/scheduling-delivery/` is a generated snapshot of the selected
+wheel runtime and license. Its `components/scheduling.source.json` binds the
+artifact, producer source, hashes and runtime requirements. Normal wheel, source
+archive and editable builds verify the selected snapshot offline. The source
+archive carries the delivery and build inputs, so rebuilding requires neither
+this repository nor Git or network access.
 
-```sh
-python scripts/scheduling_delivery.py select --dist /path/to/release-assets \
-  --revision FULL_PUBLISHED_SOURCE_SHA --receipt-sha256 REVIEWED_RECEIPT_SHA256
-python scripts/scheduling_delivery.py verify
-```
+Creating this public source home, editing it, or building a wheel does not change
+Unified's default. A future release and consumer selection must retain exact
+artifact/source provenance, Windows timezone requirements, and the sole installed
+owner. Existing schedule databases, run identities and uncertain outcomes keep
+their authority; source handoff never permits replay. App staging and rollback
+continue through Unified's ordinary activation rules.
 
-Selection verifies the original wheel/sdist/source receipt using the existing
-pure artifact checks and refuses a locally modified delivery copy. It needs the
-reviewed artifacts and receipt checksum, not the producer's Git checkout or history.
-Review the generated
-selection and any runtime requirement change together; the current Windows `tzdata`
-requirement is declared by Unified. Only Unified's package metadata is installed,
-with the selected provenance/license under `amplifier_web/component_delivery/`.
+## Continuous integration and publication
 
-Normal wheel, source archive and editable builds verify the selected snapshot
-offline through Hatch. The source archive carries the snapshot, receipt and build
-helpers, so rebuilding does not need Git, network access or the producer checkout.
-Unified's editable install maps the selected copy; develop this standalone package
-in its separate environment, not by modifying generated app delivery. The root test
-suite exercises host integration against its selected artifact; the five standalone
-policy/store tests remain with their matching component wheel.
+The **Scheduling package** workflow builds one wheel and source archive, then
+runs the same five tests against that installed wheel outside the checkout on
+Linux and Windows. The workflow uploads qualification artifacts; it does not
+publish a release or change package versions. The build/test commands above are
+the ordinary local entrypoint and need no Unified, Core, Foundation or sibling
+checkout.
 
-Ordinary app staging and rollback retain one installed owner and use existing app
-activation rules. They do not download or update scheduling independently, alter
-schedule databases, discard newer schedules, or replay uncertain run effects.
-
-## Standalone releases while this source is in Unified
-
-The **Scheduling package** workflow qualifies changes in pull requests. Its manual
-publication takes one full commit SHA already merged into Unified's `main`.
-It builds this project once and runs the existing five tests against that same
-installed wheel, outside the source checkout, on Linux and Windows. It publishes
-the wheel, source archive, `SHA256SUMS`, and `scheduling-source.json` under
-`scheduling-v<version>` in the public Unified repository. The source receipt binds
-the component version, exact Git commit/tree, source files and artifact hashes.
-
-The component release is explicitly **not Latest**. It does not change Unified's
-app version, application publisher, update feed or installed dependency selection.
-The release owner must coordinate the component version before dispatch; existing
-tags and published bytes are never replaced. Retrying an interrupted draft can
-upload only missing matching assets; a completed release is verified without
-rewriting it. An identity or checksum mismatch requires review.
-
-For an interrupted publication, rerun only the failed jobs so the publisher
-downloads the original successful build artifact. A whole workflow rerun builds
-again; timestamped archives are not promised to reproduce identical bytes and
-will be refused if they differ from an existing release. Keep the original
-workflow artifact available until publication and its checks are complete.
-
-Unified still bundles this package, so the separate-environment restriction above
-continues after artifact publication and app snapshot selection. A later separate
-distribution consumer must select an available public dependency and remove the
-embedded mapping together. Git-source,
-registry and archive delivery have different updater contracts; publishing these
-assets does not silently add archive support to the host component graph.
+The imported version remains 0.1.0 to preserve source identity. Before publishing
+from this repository, coordinate the next version and release source receipt
+with its consumers. Original published tags and bytes must remain unchanged.
+A later transfer of this repository should preserve Git history and releases;
+consumer selection changes remain explicit and reviewable.
 
 ## Contributing
 
@@ -154,9 +119,9 @@ Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
 the rights to use your contribution. For details, visit [Contributor License Agreements](https://cla.opensource.microsoft.com).
 
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
+The Microsoft source contribution requirements remain applicable to changes
+intended for transfer upstream. The temporary personal repository does not claim
+that a Microsoft CLA bot or other organization automation is already configured.
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
