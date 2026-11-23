@@ -10,9 +10,12 @@ import zipfile
 
 import pytest
 
-SPEC = importlib.util.spec_from_file_location("scheduling_release", Path(__file__).parents[1] / "scripts/release.py")
+SCRIPT = Path(__file__).resolve().parents[1] / "scripts/release.py"
+SPEC = importlib.util.spec_from_file_location("scheduling_release", SCRIPT)
 release = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(release)
+with pytest.MonkeyPatch.context() as script_path:
+    script_path.syspath_prepend(str(SCRIPT.parent))
+    SPEC.loader.exec_module(release)
 
 
 def make_candidate(tmp_path):
@@ -334,7 +337,7 @@ def test_api_listing_failure_is_not_an_empty_success(monkeypatch):
         return subprocess.CompletedProcess(args, 1, "", "gh: unavailable (HTTP 404)" if len(calls) == 1 else "gh: unavailable (HTTP 503)")
     monkeypatch.setattr(release.subprocess, "run", failed)
     with pytest.raises(RuntimeError):
-        release.find_release("scheduling-v0.1.0")
+        release.find_release(release.api, "scheduling-v0.1.0")
     assert len(calls) == 2 and "releases?per_page=100&page=1" in calls[1][0][2]
 
 
