@@ -35,6 +35,29 @@ def put(store, start=100):
     return record
 
 
+def test_renew_extends_only_the_live_owner_and_never_recovers_an_occurrence(tmp_path):
+    path = tmp_path / 'schedules.db'
+    first, other = ScheduleStore(path), ScheduleStore(path)
+    try:
+        put(first)
+        assert not first.renew(99)
+        assert first.acquire(100)
+        claimed = first.claim('session', 'one', 100)
+        assert not other.renew(120)
+        assert first.renew(125)
+        assert not other.acquire(150)
+        assert first.run('session', claimed['id']) == claimed
+        assert not first.renew(155)
+        assert other.acquire(155)
+        assert not first.renew(156)
+        assert other.run('session', claimed['id'])['phase'] == 'unknown'
+        assert other.owns(184)
+        assert not other.owns(185)
+    finally:
+        first.close()
+        other.close()
+
+
 def test_owner_lease_restart_unknown_never_replay_and_no_overlap(tmp_path):
     path = tmp_path / 'schedules.db'
     first, other = ScheduleStore(path, owner='first'), ScheduleStore(path, owner='other')

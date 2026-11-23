@@ -60,13 +60,13 @@ From this directory, in an owned development environment:
 ```sh
 uv build
 uv venv .venv
-uv pip install --python .venv/bin/python "dist/amplifier_scheduling-0.1.0-py3-none-any.whl[test]"
+uv pip install --python .venv/bin/python "dist/amplifier_scheduling-0.1.1-py3-none-any.whl[test]"
 .venv/bin/python -m pytest -q tests
 ```
 
 On Windows, use `.venv\Scripts\python.exe` for the interpreter paths. The wheel
 contains only this library and its distribution metadata; the source archive also
-contains its five policy/store tests. Those tests exercise DST gaps/folds, missed
+contains its policy/store tests. Those tests exercise DST gaps/folds, missed
 runs, owner changes, unknown outcomes, revision checks, command idempotency and
 retention using temporary SQLite databases. They require no app, native runtime,
 provider, account, network service or sibling checkout. To check an installed
@@ -94,10 +94,10 @@ Scheduling is not independently replaceable with pip in that prefix.
 
 ## Unified's current artifact selection
 
-Unified currently selects the original scheduling 0.1.0 wheel from
-[its immutable scheduling-v0.1.0 release](https://github.com/microsoft/amplifier-unified/releases/tag/scheduling-v0.1.0).
-That release and its source receipt continue to identify their original Unified
-producer; this repository does not replace or republish those bytes.
+The [Unified selection record](https://github.com/microsoft/amplifier-unified/blob/main/components/scheduling.source.json)
+names its selected wheel and the exact source for it. Version 0.1.1 adds
+`ScheduleStore.renew(now)` for a host awaiting asynchronous work. It returns
+false if the lease is missing, expired, or held by another owner.
 
 Unified's `components/scheduling-delivery/` is a generated snapshot of the selected
 wheel runtime and license. Its `components/scheduling.source.json` binds the
@@ -116,14 +116,14 @@ continue through Unified's ordinary activation rules.
 ## Continuous integration and publication
 
 The **Scheduling package** workflow builds one wheel and source archive, then
-runs the same five tests against that installed wheel outside the checkout on
-Linux and Windows. The workflow uploads qualification artifacts; it does not
-publish a release or change package versions. The build/test commands above are
+runs the same policy/store tests against that installed wheel outside the checkout on
+Linux and Windows. Pushes and PRs upload qualification artifacts. The normal
+publication workflow accepts an exact merged revision and an explicit publish request.
+The build/test commands above are
 the ordinary local entrypoint and need no Unified, Core, Foundation or sibling
 checkout.
 
-The imported version remains 0.1.0 to preserve source identity. Before publishing
-from this repository, coordinate the next version and release source receipt
+Before publishing from this repository, coordinate the next version and release source receipt
 with its consumers. Original published tags and bytes must remain unchanged.
 A later transfer of this repository should preserve Git history and releases;
 consumer selection changes remain explicit and reviewable.
