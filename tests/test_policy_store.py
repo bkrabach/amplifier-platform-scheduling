@@ -115,6 +115,28 @@ def test_block_due_is_revision_bound_atomic_and_never_replayed(tmp_path, monkeyp
         other.close()
 
 
+@pytest.mark.parametrize('recurring', [False, True])
+def test_review_found_when_missed_policy_already_skips(tmp_path, recurring):
+    store = ScheduleStore(tmp_path / 'scheduler.db')
+    try:
+        record = put(store)
+        record['missedRunPolicy'] = 'skip'
+        if not recurring:
+            record['spec'] = normalize({'kind': 'once', 'timezone': 'UTC', 'startAt': record['spec']['startAt']})
+        store.put(record)
+        assert store.acquire(201)
+        run = store.block_due('session', 'one', 201, expected_revision=1, reason='Review the change.')
+        assert run['phase'] == 'skipped' and 'blockedBeforeStart' not in run
+        assert run['detail'] == 'Missed occurrence skipped by the saved policy.'
+        saved = store.get('session', 'one')
+        if recurring:
+            assert saved['status'] == 'needs_review' and saved['nextDue'] > 201
+        else:
+            assert saved['status'] == 'completed' and saved['nextDue'] is None
+    finally:
+        store.close()
+
+
 def test_cas_idempotency_wrong_session_and_bounded_history(tmp_path):
     store = ScheduleStore(tmp_path / 'schedules.db', history_limit=2)
     record = put(store)

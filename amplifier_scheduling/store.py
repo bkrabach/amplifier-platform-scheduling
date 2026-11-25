@@ -192,12 +192,13 @@ class ScheduleStore:
             if authority_command := schedule.get('authorization', {}).get('commandId'):
                 run['authorizationCommandId'] = authority_command
             schedule.update(nextDue=due['nextDue'])
-            if reason is not None:
-                run.update(phase='skipped', blockedBeforeStart=True, detail=reason)
-                schedule.update(status='needs_review', revision=schedule['revision'] + 1, reviewReason=reason, updatedAt=now)
-            elif due['skip'] and due['nextDue'] is None:
+            if due['skip'] and due['nextDue'] is None:
                 schedule['status'] = 'completed'
                 schedule['revision'] += 1
+            elif reason is not None:
+                if not due['skip']:
+                    run.update(phase='skipped', blockedBeforeStart=True, detail=reason)
+                schedule.update(status='needs_review', revision=schedule['revision'] + 1, reviewReason=reason, updatedAt=now)
             self.db.execute('INSERT INTO schedule_runs VALUES(?,?,?,?,?,?)', (run_id, identity, session_id, run['dueAt'], run['phase'], json.dumps(run)))
             self.put(schedule)
             self.put_run(run)

@@ -159,7 +159,9 @@ review in one transaction. It requires the current lease and the exact schedule
 revision that the host checked. A blocked occurrence uses the existing terminal
 `skipped` phase, carries `blockedBeforeStart` and the host's redacted reason,
 and never enters input recovery. A new scheduler owner can complete a pending
-notification decision for that same occurrence.
+notification decision for that same occurrence. If the saved missed-run policy
+already skips the occurrence, it keeps its ordinary skipped receipt. A recurring
+schedule still enters review for future work. A one-time schedule is complete.
 
 ## Immutable release artifacts
 
