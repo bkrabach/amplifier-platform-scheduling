@@ -76,6 +76,67 @@ def test_owner_lease_restart_unknown_never_replay_and_no_overlap(tmp_path):
     first.close(); other.close()
 
 
+def test_block_due_is_revision_bound_atomic_and_never_replayed(tmp_path, monkeypatch):
+    path = tmp_path / 'scheduler.db'
+    first, other = ScheduleStore(path), ScheduleStore(path)
+    reason = 'Review the changed tool configuration.'
+    try:
+        put(first)
+        assert first.acquire(99)
+        def block(at, revision=1):
+            return first.block_due('session', 'one', at, expected_revision=revision, reason=reason)
+
+        assert block(99) is None
+        assert block(100, revision=0) is None
+        assert not other.acquire(100)
+        with pytest.raises(ValueError, match='lease'):
+            other.block_due('session', 'one', 100, expected_revision=1, reason=reason)
+        with monkeypatch.context() as patch:
+            def fail_save(_):
+                raise OSError('interrupted receipt write')
+            patch.setattr(first, 'put_run', fail_save)
+            with pytest.raises(OSError, match='interrupted'):
+                block(100)
+        assert first.get('session', 'one')['status'] == 'active' and not first.runs('session')
+        run = block(100)
+        assert run['dueAt'] == 100 and run['phase'] == 'skipped'
+        assert run['blockedBeforeStart'] and run['detail'] == reason
+        assert first.get('session', 'one')['status'] == 'needs_review'
+        assert first.get('session', 'one')['reviewReason'] == reason
+        assert block(101) is None
+        assert other.acquire(150)
+        assert other.recovered == [run]  # notify after a crash between commit and notification decision
+        assert other.claim('session', 'one', 150) is None
+        other.put_run({**run, 'notificationDecision': {'notify': True}})
+        assert first.acquire(200) and not first.recovered
+        assert len(first.runs('session')) == 1
+    finally:
+        first.close()
+        other.close()
+
+
+@pytest.mark.parametrize('recurring', [False, True])
+def test_review_found_when_missed_policy_already_skips(tmp_path, recurring):
+    store = ScheduleStore(tmp_path / 'scheduler.db')
+    try:
+        record = put(store)
+        record['missedRunPolicy'] = 'skip'
+        if not recurring:
+            record['spec'] = normalize({'kind': 'once', 'timezone': 'UTC', 'startAt': record['spec']['startAt']})
+        store.put(record)
+        assert store.acquire(201)
+        run = store.block_due('session', 'one', 201, expected_revision=1, reason='Review the change.')
+        assert run['phase'] == 'skipped' and 'blockedBeforeStart' not in run
+        assert run['detail'] == 'Missed occurrence skipped by the saved policy.'
+        saved = store.get('session', 'one')
+        if recurring:
+            assert saved['status'] == 'needs_review' and saved['nextDue'] > 201
+        else:
+            assert saved['status'] == 'completed' and saved['nextDue'] is None
+    finally:
+        store.close()
+
+
 def test_cas_idempotency_wrong_session_and_bounded_history(tmp_path):
     store = ScheduleStore(tmp_path / 'schedules.db', history_limit=2)
     record = put(store)

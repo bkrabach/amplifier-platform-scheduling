@@ -153,6 +153,16 @@ trademarks or logos is subject to and must follow
 Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
 Any use of third-party trademarks or logos are subject to those third-party's policies.
 
+If a host detects a configuration change before starting a due occurrence,
+`ScheduleStore.block_due` records the occurrence and marks its schedule for
+review in one transaction. It requires the current lease and the exact schedule
+revision that the host checked. A blocked occurrence uses the existing terminal
+`skipped` phase, carries `blockedBeforeStart` and the host's redacted reason,
+and never enters input recovery. A new scheduler owner can complete a pending
+notification decision for that same occurrence. If the saved missed-run policy
+already skips the occurrence, it keeps its ordinary skipped receipt. A recurring
+schedule still enters review for future work. A one-time schedule is complete.
+
 ## Immutable release artifacts
 
 The repository-root producer is `scripts/release.py`. Ordinary pushes and pull
