@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import sqlite3
 
 import pytest
 from amplifier_scheduling.policy import instant, normalize, preview, due_occurrence
@@ -92,13 +93,17 @@ def test_block_due_is_revision_bound_atomic_and_never_replayed(tmp_path, monkeyp
         with pytest.raises(ValueError, match='lease'):
             other.block_due('session', 'one', 100, expected_revision=1, reason=reason)
         with monkeypatch.context() as patch:
-            def fail_save(_):
-                raise OSError('interrupted receipt write')
-            patch.setattr(first, 'put_run', fail_save)
+            save_schedule = first.put
+            def fail_save(record):
+                save_schedule(record)
+                raise OSError('interrupted schedule write')
+            patch.setattr(first, 'put', fail_save)
             with pytest.raises(OSError, match='interrupted'):
                 block(100)
         assert first.get('session', 'one')['status'] == 'active' and not first.runs('session')
+        writes_before = first.db.total_changes
         run = block(100)
+        assert first.db.total_changes - writes_before == 2  # one occurrence and its schedule
         assert run['dueAt'] == 100 and run['phase'] == 'skipped'
         assert run['blockedBeforeStart'] and run['detail'] == reason
         assert first.get('session', 'one')['status'] == 'needs_review'
@@ -113,6 +118,26 @@ def test_block_due_is_revision_bound_atomic_and_never_replayed(tmp_path, monkeyp
     finally:
         first.close()
         other.close()
+
+
+def test_review_block_refuses_duplicate_due_and_prunes_on_insert(tmp_path):
+    store = ScheduleStore(tmp_path / 'schedules.db', history_limit=1)
+    try:
+        schedule = put(store)
+        old = {'id': 'retained', 'sessionId': 'session', 'scheduleId': 'one',
+               'dueAt': 100, 'phase': 'completed'}
+        store.put_run(old)
+        assert store.acquire(100)
+        with pytest.raises(sqlite3.IntegrityError):
+            store.block_due('session', 'one', 100, expected_revision=1, reason='Review configuration')
+        assert store.runs('session') == [old] and store.get('session', 'one') == schedule
+
+        store.put({**schedule, 'nextDue': 160})
+        assert store.acquire(160)
+        run = store.block_due('session', 'one', 160, expected_revision=1, reason='Review configuration')
+        assert run['blockedBeforeStart'] and store.runs('session') == [run]
+    finally:
+        store.close()
 
 
 @pytest.mark.parametrize('recurring', [False, True])
